@@ -1,0 +1,13 @@
+tempsen <- read.csv("tempsen.csv", row.names = 1)
+
+mat_dist <- dist(tempsen)
+tempclust <- hclust(mat_dist, method = "average")
+plot(tempclust, hang = -1)
+
+
+set.seed(1)
+tempkm <- kmeans(tempsen, centers = 2, nstart = 100)
+
+library(FactoMineR)
+temp_pca <- PCA(tempsen)
+temp_hcpc <- HCPC(temp_pca)

@@ -1,0 +1,864 @@
+#+TITLE: Analyse de données avec R
+#+AUTHOR: Ahmadou H. DICKO
+#+EMAIL: @dickoah
+#+DATE: Janvier 2014
+#+startup: beamer
+#+LATEX_CLASS: beamer
+#+LATEX_CLASS_OPTIONS: [xetex]
+#+LATEX_HEADER: \usepackage{minted}
+#+LATEX_HEADER: \usepackage{fancyvrb}
+#+LATEX_HEADER: \usepackage{color}
+#+LATEX_HEADER: \definecolor{newgray}{rgb}{0.95, 0.95, 0.95}
+#+LATEX_HEADER: \newminted{r}{fontsize=\small, bgcolor=newgray}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small, label=R output, frame=lines, labelposition=topline}
+#+LATEX_HEADER: \setmainfont[Mapping=tex-text,Ligatures=Common]{Linux Libertine O}
+#+LATEX_HEADER: \setsansfont[Mapping=tex-text,Ligatures=Common]{Linux Biolinum O}
+#+LATEX_HEADER: \setmonofont[Scale=0.75]{Source Code Pro}
+#+LATEX_HEADER: \usepackage{BeamerColor}
+#+LATEX_HEADER: \definecolor{UniBlue}{RGB}{83,121,170}
+#+LATEX_HEADER: \definecolor{OtherBlue}{RGB}{81, 87, 120}
+#+LATEX_HEADER: \definecolor{MyGold}{rgb}{0.96078, 0.72157, 0}
+#+LATEX_HEADER: \mode<beamer>{
+#+LATEX_HEADER: \usetheme{Boadilla}
+#+LATEX_HEADER: \useoutertheme{default}
+#+LATEX_HEADER: \usefonttheme{professionalfonts} 
+#+LATEX_HEADER: \usecolortheme{dolphin}
+#+LATEX_HEADER: \useinnertheme{rounded}
+#+LATEX_HEADER: \setbeamercovered{transparent}
+#+LATEX_HEADER: \setbeamertemplate{navigation symbols}{}
+#+LATEX_HEADER: \setbeamercolor{title}{fg=MyGold, bg=SteelBlue4!80!black}
+#+LATEX_HEADER: \setbeamercolor{frametitle}{fg=MyGold, bg=SteelBlue4!80!black}
+#+LATEX_HEADER: \setbeamercolor{structure}{fg=SteelBlue4}
+#+LATEX_HEADER: \setbeamercolor{institute in head/foot}{bg=SteelBlue4!20!black}
+#+LATEX_HEADER: \setbeamercolor{title in head/foot}{bg=SteelBlue4!80!black}
+#+LATEX_HEADER: \setbeamercolor{date in head/foot}{fg=MyGold, bg=SteelBlue4}
+#+LATEX_HEADER: \setbeamercolor{palette primary}{use=title,bg=title.bg}
+#+LATEX_HEADER: \setbeamertemplate{blocks}[default]
+#+LATEX_HEADER: \setbeamercolor{block title}{bg=}
+#+LATEX_HEADER: \setbeamercolor{block body}{bg=}
+#+LATEX_HEADER:}
+#+LATEX_HEADER: \institute[R meetup]{Dakar R User Group}
+#+COLUMNS: %40ITEM %10BEAMER_env(Env) %9BEAMER_envargs(Env Args) %4BEAMER_col(Col) %10BEAMER_extra(Extra)
+#+PROPERTY: session *R*
+#+PROPERTY: cache yes 
+#+PROPERTY: exports both
+#+PROPERTY: tangle yes
+#+PROPERTY: results output graphics
+#+OPTIONS: toc:nil H:2
+
+#+LATEX:\selectlanguage{frenchb}
+#+LATEX:\begin{frame}{Plan}
+#+LATEX:\tableofcontents
+#+LATEX:\end{frame}
+
+
+* Intro 
+
+** Introduction 						    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+
+- Avec la révolution numérique on vit un déluge de donnés (facebook, twitter, etc.)
+- Les données à traiter sont de plus en plus volumineux et liés
+- L'analyse exploratoire (EDA) est une étape nécessaire pour comprendre les données et leurs liaisons potentielles 
+- L'analyse factorielle des données et les méthodes de classification présente une cadre efficace d'exploration de telle données
+- Cette analyse passe par des logiciels spécialisés de plus en plus en performant
+- ~R~ est l'un des langage pour l'analyse de données les plus utilisés dans le monde
+
+#+begin_src R :exports none :results silent :session
+    library(Cairo)
+    library(MASS) 
+    library(ggplot2) 
+      mainfont <- "Garamond"
+      CairoFonts(regular = paste(mainfont, "style=Regular", sep=":"),
+                 bold = paste(mainfont, "style=Bold", sep=":"),
+                 italic = paste(mainfont, "style=Italic", sep=":"),
+                 bolditalic = paste(mainfont, "style=Bold Italic,BoldItalic", sep=":"))
+      pdf <- CairoPDF
+      options(prompt = "> ")
+  ## pdf <- function(file, width=16, height=10)
+  ## {
+  ##   fname <- paste("figures/",file,".pdf",sep="")
+  ##   CairoPDF(fname, width=width/2.54, height=height/2.54,
+  ##       pointsize=10)
+  ##   par(mgp=c(2.2,0.45,0), tcl=-0.4, mar=c(3.3,3.6,1.1,1.1))
+  ## }
+  source("panel.lm.R")
+#+end_src
+
+* Présentation de R
+#+LATEX:\begin{frame}{Plan}
+#+LATEX:\tableofcontents[currentsection]
+#+LATEX:\end{frame}
+
+** Historique							    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+ - R est un langage interpreté qui tirent ses racines de S, Lisp, schemes
+ - Quelques dates importantes :
+   - 1990 : Ross Ihaka et Robert Gentleman développent ~R~
+   - 1996 : le projet devient open source
+   - 2013 : ~R~ 3.0 est sorti et il y a plus de 5000 packages (add-ons)
+
+** Concepts importants						    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+ - Un package ~R~ est en ensemble de fonctionnalité généralement organisé autour d'un thème (ou pas)
+ - Travailler sur ~R~ nécessite d'écrire des lignes de commandes (pas toujours)
+ - ~Rstudio~ est un environnement de travail pour ~R~ (mais y en d'autres... ~ESS~)
+
+** Environnement de travail 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+- ~Rstudio~
+[[./fig/rstudio.pdf]]
+
+** Environnement de travail 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+- ~Emacs ESS~
+[[./fig/emacs.pdf]]
+
+** Base du langage : R calculatrice ? 				    :B_frame: 
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+#+begin_src R :exports both
+x <- c(pi, 4*pi / 3)
+#+end_src
+#+begin_src R :exports both
+log(-cos(x))
+#+end_src
+
+** Base du langage : Collection d'éléments (1/2) 		    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+#+begin_src R :exports both
+c(1, 2, 10)
+#+end_src
+#+begin_src R :exports both
+c("Ali", "Modou", "Marie")
+#+end_src
+
+** Base du langage : Collection d'éléments (2/2) 		    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+#+begin_src R :exports both
+c(1, 2, "a")
+#+end_src
+#+begin_src R :exports both
+list("Ali", 10, "Marie")
+#+end_src
+   
+** Base du langage: table (rectangulaire) 			    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+#+begin_src R :exports both
+    df <- data.frame(nom = c("Ali", "Modou", "Marie"), 
+                     taille = c(170, 185, 165))
+#+end_src
+#+begin_src R :exports both
+  df$nom
+#+end_src
+#+begin_src R :exports both
+  df[df$taille > 165, ]
+#+end_src
+   
+** Analyse de données sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+- ~R~ dispose de fonctions pour faire des analyses basiques:
+  - ~prcomp~, ~princomp~, etc. 
+  - ~hclust~, ~kmeans~, etc.
+  
+- Il existe de nombreux packages mais les principaux sont : 
+  - ~FactoMineR~
+  - ~ade4~
+
+- Nous utiliserons principalement ~FactoMineR~ pour le reste des analyses
+
+* Méthodes factorielles
+#+LATEX:\begin{frame}{Plan}
+#+LATEX:\tableofcontents[currentsection]
+#+LATEX:\end{frame}
+
+** Titre acp 							:B_fullframe:
+   :PROPERTIES:
+   :BEAMER_env: fullframe
+   :END:
+#+LATEX:\begin{center}
+#+LATEX:{\Huge Analyse en composantes principales}
+#+LATEX:\end{center}
+   
+** ACP : Objectif						    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+- Analyse exploratoire des tables de variables quantitatives
+- Positionner les individus par rapport à leurs proximités 
+- Positionner les variables par rapport à leurs corrélations
+- Chercher un petit nombre de variables non corrélées qui résument l'information de la table originale 
+
+** Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both
+  auto <- read.csv("data/auto.csv", row.names = 1)
+  summary(auto)
+#+end_src
+
+** ACP : Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both 
+head(auto)
+#+end_src
+
+** ACP : Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports results :results graphics :file fig/stars.pdf :height 4
+  par(mgp=c(2.2,0.45,0), mar=c(3.3,3.6,1.1,1.1))
+  stars(auto, len = 0.65,
+        key.loc = c(4.5, 12),
+        main = "", cex = 0.3, lwd = 0.1, draw.segments = FALSE)
+  
+#+end_src
+
+** ACP : Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+#+name: starplot
+#+begin_src R :exports results :results graphics :file fig/pairs.pdf :height 3 :width 4 
+  par(tcl = -0.2, cex.axis = 0.4, lwd = 0.15, xaxt = "n", yaxt = "n")
+  pairs(auto, col = c(rep("black", 18), "red", rep("black", 5)),
+        pch = c(rep(3, 18), 15, rep(3, 5)),
+        gap=0, panel = panel.lm, cex = 0.5, cex.labels = 0.8)
+#+end_src
+
+** ACP : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+
+#+begin_src R :exports both 
+  library(FactoMineR)
+  auto_acp <- PCA(auto, ncp = 2, graph = FALSE)
+#+end_src
+
+#+header: :width 2 :height 1
+#+begin_src R :exports results :results graphics :file fig/acphist_eig.pdf 
+  par(bty = "n", lwd = 0.2, cex = 0.15, mgp = c(2.2, 0.45, 0), mar = c(3.3, 3.6, 1.1, 1.1))
+  barplot(rev(auto_acp$eig[,1]),
+          col = "steelblue", horiz = TRUE,
+          names.arg = paste0("PC", rev(seq_along(auto_acp$eig[,1]))),
+          las = 1, xaxt = "n")
+#+end_src
+
+
+** ACP : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both 
+auto_acp$eig
+#+end_src
+
+
+** ACP : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both 
+cbind(
+dist = auto_acp$ind$dist^2,
+coord =  auto_acp$ind$coord,
+cos2 = auto_acp$ind$cos2
+)[1:4, ]
+#+end_src
+
+** ACP : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+
+#+begin_src R :exports both 
+auto_acp$var$coord
+#+end_src
+
+
+** ACP : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+
+#+header: :width 3 :height 2
+#+begin_src R :exports results :results graphics :file fig/acp_map.pdf 
+  par(cex = 0.15, lwd = 0.2, mgp = c(2.2, 0.45, 0), mar = c(3.3, 3.6, 1.1, 1.1))
+  plot(auto_acp, title = "", xaxt = "n", yaxt = "n")
+  axis(1, at = seq(-4, 4, by = 2), labels = seq(-4, 4, by = 2), lwd = 0.2, lwd.ticks = 0.1)
+  axis(2, at = seq(-4, 4, by = 2), labels = seq(-4, 4, by = 2), lwd = 0.2, lwd.ticks = 0.1)     
+#+end_src
+
+** ACP : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+
+#+header: :width 3.5 :height 2.5
+#+begin_src R :exports results :file fig/acpvar_map.pdf :results output graphics 
+  par(xaxt = "n", yaxt = "n", cex = 0.5, lwd = 0.2)
+  graph.var(auto_acp, title = "", new.plot = FALSE)
+#+end_src
+
+** ACP : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+#+header: :width 9 :height 5
+#+begin_src R :exports results :file fig/acpbiplot.pdf :results output graphics
+  par(cex = 0.5, lwd = 0.5)
+  pca <- prcomp(auto, scale. = TRUE)
+  biplot(pca, xaxt = "n", yaxt = "n", cex = 1, las = 0.9)
+  axis(1, at = seq(-4, 4, by = 2), labels = seq(-0.4, 0.4, by = 0.2), lwd = 0.2, lwd.ticks = 0.1)
+  axis(2, at = seq(-4, 4, by = 2), labels = seq(-0.4, 0.4, by = 0.2), lwd = 0.2, lwd.ticks = 0.1)
+  axis(3, at = seq(-4, 4, by = 2), labels = seq(-4, 4, by = 2), col = "red", lwd = 0.2, lwd.ticks = 0.1)
+  axis(4, at = seq(-4, 4, by = 2), labels = seq(-4, 4, by = 2), col = "red", lwd = 0.2, lwd.ticks = 0.1)  
+  abline(v = 0, h = 0, lty = "dashed")
+  
+#+end_src
+
+#+RESULTS[9acf76a26dd2b01f322e3a2ab637880142b469f3]:
+[[file:fig/acpbiplot.pdf]]
+
+
+** Titre AFC 							:B_fullframe:
+   :PROPERTIES:
+   :BEAMER_env: fullframe
+   :END:
+#+LATEX:\begin{center}
+#+LATEX:{\Huge Analyse factorielles des correspondances}
+#+LATEX:\end{center}
+
+** AFC : Objectif						    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+- Analyse exploratoire de tables de contingence
+- Mise en relief des écarts à l'indépendance du tableau de contigence
+- Allez au delà du $\chi^2$ et autre test d'indépendance
+** AFC : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both :results output
+nice <- read.csv("data/nice.csv")
+names(nice) <- tolower(names(nice))
+str(nice)
+#+end_src
+
+** AFC : Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both :results output
+library(reshape2)
+nice <- melt(nice, id = "csp", variable.name = "filiere")
+str(nice)
+#+end_src
+
+** AFC : Mise en oeuvre sous R
+#+begin_src R :exports both :results both
+cont_table <- xtabs(value ~ csp + filiere, data = nice)
+cont_table
+#+end_src
+
+** AFC :Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both :results both
+chisq.test(cont_table)
+#+end_src
+
+** AFC :Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both :results both
+nice_afc <- CA(cont_table, graph = FALSE)
+#+end_src
+
+#+header: :width 2.75 :height 1.5
+#+begin_src R :exports results :results graphics :file fig/afc_map.pdf 
+  par(cex = 0.2, lwd = 0.2, mgp = c(2.2, 0.45, 0), mar = c(3.3, 3.6, 1.1, 1.1))
+  plot(nice_afc, title = "", xaxt = "n", yaxt = "n")
+  axis(1, seq(-0.4, 0.4, 0.2), seq(-0.4, 0.4, 0.2), lwd = 0.2)
+  axis(2, seq(-0.4, 0.4, 0.2), seq(-0.4, 0.4, 0.2), lwd = 0.2)  
+#+end_src
+
+** AFC :Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both :results both
+    rbind(
+        nice_afc$row$contrib[ ,1:3],
+        nice_afc$col$contrib[ ,1:3]
+        )
+#+end_src
+
+** AFC :Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both :results both
+    rbind(
+        nice_afc$row$cos2[ ,1:3],
+        nice_afc$col$cos2[ ,1:3]
+        )
+#+end_src
+
+
+
+
+
+
+** Titre ACM							:B_fullframe:
+   :PROPERTIES:
+   :BEAMER_env: fullframe
+   :END:
+#+LATEX:\begin{center}
+#+LATEX:{\Huge Analyse des correspondances multiples}
+#+LATEX:\end{center}
+
+** ACM : Objectif						    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :END:
+- Analyse exploratoire de tables de variables qualitatives
+- Mettre en évidence des proximités (non linéaire) entre individus, entre modalités et entre les deux
+- Développer une typologie des individus et des modalités
+
+** ACM : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both :results output
+chien <- read.csv("data/chien.csv", row.names = 1, colClasses = "factor")
+names(chien) <- tolower(names(chien))
+str(chien)
+#+end_src
+
+** ACM : Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both :results output
+library(ade4)
+acm.disjonctif(chien)[1:6, 1:5]
+#+end_src
+
+** ACM : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both
+  chien_acm <- MCA(chien, 
+                   quali.sup = match("fonction", names(chien)),
+                   graph = FALSE)  
+#+end_src
+
+#+header: :width 2 :height 1
+#+begin_src R :exports results :results graphics :file fig/acmhist_eig.pdf 
+  par(bty = "n", lwd = 0.2, cex = 0.15, mgp = c(2.2, 0.45, 0), mar = c(3.3, 3.6, 1.1, 1.1))
+  barplot(rev(chien_acm$eig[,1]),
+          col = "steelblue", horiz = TRUE,
+          names.arg = paste0("axes ", rev(seq_along(chien_acm$eig[,1]))),
+          las = 1, xaxt = "n")
+#+end_src
+
+#+RESULTS[5b1b98f2ef4be82e04424ef17c26aef0ed4436a3]:
+[[file:fig/acmhist_eig.pdf]]
+
+** ACM : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+header: :width 2.75 :height 1.5
+#+begin_src R :exports results :results graphics :file fig/acm_map.pdf 
+    par(cex = 0.2, lwd = 0.2, mgp = c(2.2, 0.45, 0), mar = c(3.3, 3.6, 1.1, 1.1))
+    plot(chien_acm, title = "", xaxt = "n", yaxt = "n")
+    axis(1, seq(-1.5, 1.5, 0.5), seq(-1.5, 1.5, 0.5), lwd = 0.2)
+    axis(2, seq(-1.5, 1.5, 0.5), seq(-1.5, 1.5, 0.5), lwd = 0.2)   
+#+end_src
+
+#+RESULTS[1663d6d3a2be01516be5e3a745a76ef9c5f8021d]:
+[[file:fig/acm_map.pdf]]
+
+
+
+* Méthodes de classification
+#+LATEX:\begin{frame}{Plan}
+#+LATEX:\tableofcontents[currentsection]
+#+LATEX:\end{frame}
+
+
+** Titre CAH 							:B_fullframe:
+   :PROPERTIES:
+   :BEAMER_env: fullframe
+   :END:
+#+LATEX:\begin{center}
+#+LATEX:{\Huge Classification hierarchique}
+#+LATEX:\end{center}
+
+** CAH : Objectif
+- Créez des groupes en agrégreant successivement les individus 
+
+** CAH : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_opt: t
+   :END:
+
+
+#+begin_src R :export both
+tempsen <- read.csv("data/tempsen.csv", row.names = 1)
+tempsen[1:8, 1:6]
+#+end_src
+
+** CAH : Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_opt: t
+   :END:
+#+begin_src R :export both
+mat_dist <- dist(tempsen)
+as.matrix(mat_dist)[1:5, 1:5]
+#+end_src
+
+** CAH : Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_opt: t
+   :END:
+#+begin_src R :export both
+tempclust <- hclust(mat_dist, method = "average")
+#+end_src
+
+#+begin_src R :exports results :file fig/tree1.pdf :width 4 :height 3 :results output graphics
+par(las = 1, cex = 0.3, lwd = 0.15)
+plot(tempclust, hang = -1, main = "")
+#+end_src
+
+** CAH : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_opt: t
+   :END:
+#+begin_src R :exports results :file fig/tree_level1.pdf :width 3.5 :height 2.5 :results output graphics
+  par(las = 1, cex = 0.3, lwd = 0.15)
+  barplot(sort(tempclust$height, decreasing = TRUE), col = c("steelblue", "red")[(sort(tempclust$height, decreasing = TRUE) > 10) + 1], lwd = 0.08) 
+  abline(h = 10, lty = "dashed", col = "red", lwd = 0.25)
+  
+#+end_src
+
+** CAH : Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_opt: t
+   :END:
+#+begin_src R :export both
+temphcut <- cutree(tempclust, k = 3)
+#+end_src
+
+#+begin_src R :exports results :file fig/cut_tree1.pdf :width 3.5 :height 2.5 :results output graphics
+par(las = 1, cex = 0.3, lwd = 0.15)
+plot(tempclust, hang = -1, main = "")
+abline(h = 10, lty = "dashed", col = "red")
+#+end_src
+
+
+** CAH : Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_opt: t
+   :END:
+#+begin_src R :exports results :results silent
+  temp_pca <- PCA(tempsen, graph = FALSE)
+  temp_hcpc <- HCPC(temp_pca, graph = FALSE) 
+#+end_src
+
+#+begin_src R :exports results :file fig/map_tree2.pdf :width 7 :height 4.5 :results output graphics
+  par(las = 1, cex = 0.5, lwd = 0.3)
+  plot(temp_hcpc, choice = "map", title = "", xaxt = "n", yaxt = "n")
+  axis(1, at = c(-10, -5, 0, 5), c(-10, -5, 0, 5), lwd = 0.2)
+  axis(2, at = c(-10, -5, 0, 5), c(-10, -5, 0, 5), lwd = 0.2)
+#+end_src
+
+
+* Un exemple d'analyse non supervisé
+#+LATEX:\begin{frame}{Plan}
+#+LATEX:\tableofcontents[currentsection]
+#+LATEX:\end{frame}
+
+** Titre exemple
+#+LATEX:\begin{center}
+#+LATEX:{\Huge Un exemple pour conclure}
+#+LATEX:\end{center}
+
+** Classification des ménages Sénégalais selon leur niveau de vie
+- étape 1: Analyse factorielle : ACM
+- étape 2: K-means sur les axes factorielles
+- étape 3: CAH sur les centres de gravités des groupes formés 
+- étape 4: K-means pour consolider les groupes
+
+** Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both
+household <- readRDS("data/household.rds")
+#+end_src
+
+#+begin_src R :exports none :results silent :session
+is.na(household$cons_tot) <- household$cons_tot == 0
+household$cons_tot[is.na(household$cons_tot)] <- median(household$cons_tot, na.rm = TRUE)
+household$cons_tot <- log(household$cons_tot)
+is.na(household$deptotjr) <- household$deptotjr < 50
+household$deptotjr[is.na(household$deptotjr)] <- median(household$deptotjr, na.rm = TRUE)
+household$deptotjr <- log(household$deptotjr)
+#+end_src
+
+#+begin_src R :exports none :results silent :session
+household$hh_size <- cut(household$hh_size, breaks = quantile(household$hh_size, probs = seq(0, 1, 1/3)),
+                         right = FALSE, ordered_result = TRUE, include.lowest = TRUE,
+                         labels = c("low", "medium", "high"))
+
+household$cons_tot <- cut(household$cons_tot, breaks = quantile(household$cons_tot, probs = seq(0, 1, 1/3)),
+                          right = FALSE, ordered_result = TRUE, include.lowest = TRUE,
+                          labels = c("low", "medium", "high"))
+
+household$deptotjr <- cut(household$deptotjr, breaks = quantile(household$deptotjr, probs = seq(0, 1, 1/3)),
+                          right = FALSE, ordered_result = TRUE, include.lowest = TRUE,
+                          labels = c("low", "medium", "high"))
+#+end_src
+
+#+begin_src R :exports both
+summary(household)
+#+end_src
+
+** Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports both
+naxes_max  <- sum(sapply(household[ ,-1], nlevels)) - ncol(household[ ,-1])
+mca <- dudi.acm(household[,-1], nf = naxes_max, scannf = FALSE)
+#+end_src
+
+#+begin_src R :exports none :results silent :session
+poids <- list()
+for(i in 2:ncol(household)) {
+    poids[[i]] <- table(household[,i])
+}
+
+poids <- cbind(unlist(poids))
+str(mca)
+variable  <- mca$co[ ,1:3]
+variable$poids <- poids
+names(variable) <- c("dim.1", "dim.2", "dim.3", "poids")
+str(variable)
+#+end_src
+
+#+begin_src R :exports results :file fig/mcahs.pdf :width 7 :height 3.5 :results output graphics
+  ggplot() +
+      geom_point(aes(x = dim.1, y = dim.2, size = poids), pch = 21, colour = "steelblue", fill = "white", data = variable) +
+      geom_text(aes(x = dim.1 - 0.05, y = dim.2 + 0.07, label = rownames(variable)), size = 1.5, data = variable) +
+      scale_x_continuous(limits = c(-1.6, 1.2)) + 
+      ## geom_path(aes(x = dim.1, y = dim.2), data = variable[c(3, 1, 2, 4),], size = 0.4) +
+      ## geom_path(aes(x = dim.1, y = dim.2), data = variable[9:13,], size = 0.4) +
+      geom_vline(aes(xintercept = 0), linetype = "dotted") +
+      geom_hline(aes(yintercept = 0), linetype = "dotted")+
+      labs(x = "axe 1", y = "axe 2") +
+      theme_bw() +
+      theme(legend.position = "none", axis.text.x = element_text(size = 5), axis.text.y = element_text(size = 5), axis.title.x = element_text(size = 5), axis.title.y = element_text(size = 5), axis.ticks = element_blank())
+#+end_src
+
+
+** Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports results :file fig/eigbar.pdf :width 4 :height 2.5 :results output graphics
+  ggplot(data.frame(axes = seq_along(mca$eig), eig = mca$eig)) +
+  geom_bar(stat = "identity", size = 0.2,
+           aes(x = axes, y = eig, fill = eig > 0.1)) +
+  scale_fill_manual(values = c("grey", "steelblue")) + 
+  theme_bw() +
+  theme(legend.position = "none", axis.text.x = element_text(size = 5), axis.text.y = element_text(size = 5), axis.title.x = element_text(size = 5), axis.title.y = element_text(size = 5), axis.ticks = element_blank())
+#+end_src
+
+** Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+
+- On va donc travailler avec les 4 premiers axes et vérifier qu'ils sont bien centrés et réduits.
+\vskip 0.2cm
+#+begin_src R :exports both
+mcadata <- mca$l1[ ,1:4]
+sapply(mcadata, function(x) list(mean = round(mean(x), 2), std = sd(x)))
+#+end_src
+
+** Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+- Utilisation des K-means sur les axes factorielles 
+- Ne pas oublier d'initialiser le ~seed~ pour rendre les résultats reproductibles
+\vskip 0.2cm
+#+begin_src R :exports both
+set.seed(1234)
+hh_part <- kmeans(mcadata, centers = 100,
+nstart = 20, iter.max = 500)
+#+end_src
+
+- CAH sur les centres de gravités des classes
+\vskip 0.2cm
+#+begin_src R :exports both
+hh_hclust <- hclust(dist(hh_part$centers), method = "ward")
+#+end_src
+
+** Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports results :file fig/tree.pdf :width 4.5 :height 3.5 :results output graphics
+  par(las = 1, cex = 0.3, lwd = 0.15)
+  # layout(matrix(c(1, 1, 1, 1, 2, 1), ncol = 3))
+  plclust(hh_hclust, hang = -1)
+  abline(h = 20, lty = "dashed", col = "red", lwd = 0.25)  
+#+end_src
+
+
+** Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+#+begin_src R :exports results :file fig/tree_level.pdf :width 3.5 :height 2.5 :results output graphics
+  par(las = 1, cex = 0.3, lwd = 0.15)
+  barplot(sort(hh_hclust$height, decreasing = TRUE), col = c("steelblue", "red")[(sort(hh_hclust$height, decreasing = TRUE) > 20) + 1], lwd = 0.08) 
+  abline(h = 20, lty = "dashed", col = "red", lwd = 0.25)
+#+end_src
+
+** Mise en oeuvre sous R					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+- Nombre de centre par groupe
+\vskip 0.2cm
+#+begin_src R :exports both
+hh_tree <- cutree(hh_hclust, k = 3)
+table(hh_tree)
+#+end_src
+
+** Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+- Associer à chaque ménage à son nouveau groupe
+\vskip 0.2cm
+#+begin_src R :exports both
+dataclust <- data.frame(kclust = seq_along(hh_tree), hclust = hh_tree)
+household$kclust <- hh_part$cluster
+household <- merge(household, dataclust, by = "kclust")
+#+end_src
+
+- Nombre final de ménages par groupe
+\vskip 0.2cm
+#+begin_src R :exports both
+table(household$hclust)
+#+end_src
+
+** Mise en oeuvre sous R 					    :B_frame:
+   :PROPERTIES:
+   :BEAMER_env: frame
+   :BEAMER_OPT: t
+   :END:
+- Étape finale de consolidation des groupes précedemment formés.
+- Utilisation de la médianne pour rendre les résultats moins sensibles aux valeurs extrêmes
+\vskip 0.2cm 
+#+begin_src R :exports both
+centers <- by(mcadata, household$hclust, function(x) apply(x, 2, median))
+centers <- matrix(unlist(centers), ncol = ncol(mcadata), byrow = TRUE)
+consol <- kmeans(mcadata, centers = centers, iter.max = 50, nstart = 10)
+#+end_src
+
+#+begin_src R :exports none :results silent :session
+  indiv  <- mca$li[ ,1:3]
+  names(indiv) <- c("dim.1", "dim.2", "dim.3")
+  indiv$hclust <- factor(household$hclust)
+  indiv$hclust2 <- factor(consol$cluster)  
+#+end_src
+
+** Mise en oeuvre sous R
+#+begin_src R :exports results :file fig/cluster_height.pdf :width 7 :height 4.5 :results output graphics
+  names(indiv)[5] <- "cluster"
+  ggplot() +
+  geom_point(aes(x = dim.1, y = dim.2, colour = cluster), pch = 19, data = indiv, size = 0.2) +
+  geom_vline(aes(xintercept = 0), linetype = "dotted", size = 0.5) +
+  geom_hline(aes(yintercept = 0), linetype = "dotted", size = 0.5) +
+  labs(x = "axe 1", y = "axe 2") +
+  theme_bw() + 
+  theme(legend.position = "bottom", legend.direction = "horizontal", axis.text.x = element_text(size = 6), axis.text.y = element_text(size = 6), axis.title.x = element_text(size = 7), axis.title.y = element_text(size = 7), axis.ticks = element_blank())
+  
+#+end_src
+
+** Conclusion
+- ~R~ est une option viable et performante pour l'analyse de données
+- ~R~ est libre et gratuit donc le seul coût est celui d'apprentissage 
+- Il s'agit juste d'une introduction plusieurs méthodes n'ont pas été explorées
+ 
